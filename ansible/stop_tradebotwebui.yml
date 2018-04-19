@@ -1,0 +1,18 @@
+--- #Tradebot webui playbook
+- hosts: azure
+  remote_user: azureuser
+  become: true
+  become_method: sudo
+  connection: ssh
+
+  vars_files:
+    - ansible_vars.yml
+
+  tasks:
+  - name: get java processes
+    shell: "ps axf | grep java | grep -v grep | awk '{print $1}'"
+    register: java_process
+  
+  - name: kill java processes
+    shell: "kill {{ item }}"
+    with_items: "{{ java_process.stdout_lines }}"

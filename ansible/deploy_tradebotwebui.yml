@@ -1,0 +1,37 @@
+--- #Tradebot webui playbook
+- hosts: azure
+  remote_user: azureuser
+  become: true
+  become_method: sudo
+  connection: ssh
+
+  vars_files:
+    - key_vars.yml
+    - ansible_vars.yml
+
+  tasks:
+  - name: Get artifact from S3
+    get_url:
+      url: "{{ artifact_url }}/{{ artifact_name }}"
+      dest: "/tmp/{{ artifact_name }}"
+
+#  - name: Update and upgrade apt packages
+#    apt:
+#      upgrade: dist
+#      update_cache: yes
+      
+  - name: Install the package default_jre
+    apt:
+      name: default-jre
+      state: present
+      
+  - name: Trigger java process
+    shell: "(java -jar /tmp/{{ artifact_name }} > /tmp/tradebotui.out.txt 2>&1 &)"
+    async: 10
+    poll: 0
+    environment:
+      AWS_ACCESS_KEY: "{{ access_key }}"
+      AWS_SECRET_KEY: "{{ secret_key }}"
+      S3_ENDPOINT: "{{ S3_ENDPOINT }}"
+      TRADEBOT_S3_BUCKET_NAME: "{{ TRADEBOT_S3_BUCKET_NAME }}"
+      S3_REGION: "{{ S3_REGION }}"

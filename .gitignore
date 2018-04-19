@@ -4,3 +4,13 @@
 
 # Module directory
 .terraform/
+
+# Variable mapping
+*tfvars
+
+# Emacs, ansible and others
+*~
+**key_vars.yml
+**retry
+**id_rsa*
+

@@ -1,0 +1,6 @@
+---
+S3_ENDPOINT: s3.us-east-1.amazonaws.com
+TRADEBOT_S3_BUCKET_NAME: tradebot-in-122517
+S3_REGION: us-east-1
+artifact_url: https://s3.amazonaws.com/tradebot-artifacts
+artifact_name: tradebot-webui-0.0.1-SNAPSHOT.jar

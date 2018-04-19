@@ -1,0 +1,35 @@
+--- #Tradebot webui playbook
+- hosts: azure
+  remote_user: azureuser
+  become: true
+  become_method: sudo
+  connection: ssh
+
+  vars_files:
+    - key_vars.yml
+    - ansible_vars.yml
+
+  tasks:
+  - name: get java processes
+    shell: "ps axf | grep java | grep -v grep | awk '{print $1}'"
+    register: java_process
+  
+  - name: kill java processes
+    shell: "kill {{ item }}"
+    with_items: "{{ java_process.stdout_lines }}"
+
+  - name: Get artifact from S3
+    get_url:
+      url: "{{ artifact_url }}/{{ artifact_name }}"
+      dest: "/tmp/{{ artifact_name }}"
+
+  - name: Trigger java process
+    shell: "(java -jar /tmp/{{ artifact_name }} > /tmp/tradebotui.out.txt 2>&1 &)"
+    async: 10
+    poll: 0
+    environment:
+      AWS_ACCESS_KEY: "{{ access_key }}"
+      AWS_SECRET_KEY: "{{ secret_key }}"
+      S3_ENDPOINT: "{{ S3_ENDPOINT }}"
+      TRADEBOT_S3_BUCKET_NAME: "{{ TRADEBOT_S3_BUCKET_NAME }}"
+      S3_REGION: "{{ S3_REGION }}"
