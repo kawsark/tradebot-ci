@@ -6,8 +6,8 @@ resource "azurerm_resource_group" "tradebotresourcegroup" {
   location = "${var.location}"
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
   }
 }
 
@@ -19,8 +19,8 @@ resource "azurerm_virtual_network" "tradebotvnet" {
   resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
   }
 }
 
@@ -41,8 +41,8 @@ resource "azurerm_public_ip" "tradebotpublicip" {
   count                        = 2
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
     description = "IP address for tradebot Web UI server"
   }
 }
@@ -78,8 +78,8 @@ resource "azurerm_network_security_group" "tradebotpublicipnsg" {
   }
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
     description = "NSG with for tradebot Web UI application"
   }
 }
@@ -100,8 +100,8 @@ resource "azurerm_network_interface" "tradebotwebuivnic" {
   }
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
   }
 }
 
@@ -124,8 +124,8 @@ resource "azurerm_storage_account" "tradebotstorageaccount" {
   account_tier             = "Standard"
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
+    environment = "${var.environment}"
+    application = "${var.application}"
   }
 }
 
@@ -239,9 +239,8 @@ resource "azurerm_virtual_machine" "tradebotwebuivm" {
   }
 
   tags {
-    environment = "Dev"
-    application = "Tradebot"
-    description = "Tradebot Web UI server"
+    environment = "${var.environment}"
+    application = "${var.application}"
   }
 
 }

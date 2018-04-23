@@ -23,6 +23,5 @@
     environment:
       AWS_ACCESS_KEY: "{{ access_key }}"
       AWS_SECRET_KEY: "{{ secret_key }}"
-      S3_ENDPOINT: "{{ S3_ENDPOINT }}"
-      TRADEBOT_S3_BUCKET_NAME: "{{ TRADEBOT_S3_BUCKET_NAME }}"
-      S3_REGION: "{{ S3_REGION }}"
+      TRADEBOT_SQS_QUEUE_NAME: "{{ TRADEBOT_SQS_QUEUE_NAME }}"
+      TRADEBOT_SERVER_REGION: "{{ TRADEBOT_SERVER_REGION }}"
