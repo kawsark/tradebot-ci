@@ -1,7 +1,8 @@
 --- #Tradebot webui playbook
 - hosts: azure
   remote_user: azureuser
-  become: true
+  become: yes
+  become_user: root
   become_method: sudo
   connection: ssh
 
