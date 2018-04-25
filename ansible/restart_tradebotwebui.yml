@@ -2,6 +2,7 @@
 - hosts: azure
   remote_user: azureuser
   become: true
+  become_user: root
   become_method: sudo
   connection: ssh
 
