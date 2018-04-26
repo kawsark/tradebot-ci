@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "tradebotresourcegroup" {
 # Create a VNET
 resource "azurerm_virtual_network" "tradebotvnet" {
   name                = "tradebotvnet"
-  address_space       = "${var.vnet_address_space}"
+  address_space       = ["${var.vnet_address_space}"]
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
 
