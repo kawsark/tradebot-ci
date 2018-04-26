@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "tradebotresourcegroup" {
 # Create a VNET
 resource "azurerm_virtual_network" "tradebotvnet" {
   name                = "tradebotvnet"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["${var.vnet_address_space}"]
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
 
@@ -29,7 +29,7 @@ resource "azurerm_subnet" "tradebotsubnet1" {
   name                 = "tradebotsubnet1"
   resource_group_name  = "${azurerm_resource_group.tradebotresourcegroup.name}"
   virtual_network_name = "${azurerm_virtual_network.tradebotvnet.name}"
-  address_prefix       = "10.0.2.0/24"
+  address_prefix       = "${var.subnet_address_prefix}"
 }
 
 # Create a public IP address
@@ -146,7 +146,7 @@ resource "azurerm_public_ip" "tradebotlbip" {
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.tradebotresourcegroup.name}"
   public_ip_address_allocation = "dynamic"
-  domain_name_label            = "tradebotdomain"
+  domain_name_label            = "${var.domain_name_label}"
  }
 
 resource "azurerm_lb" "tradebotlb" {
