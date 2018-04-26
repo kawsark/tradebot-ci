@@ -5,7 +5,7 @@ variable "location" {
 }
 
 variable "environment" {
-	 default = "Staging"
+	 default = "Dev"
 }
 
 variable "application" {
@@ -17,9 +17,9 @@ variable "vnet_address_space" {
 }
 
 variable "subnet_address_prefix" {
-	 default = "10.0.3.0/24"
+	 default = "10.0.4.0/24"
 }
 
 variable "domain_name_label" {
-	 default = "tradebotstage"
+	 default = "tradebotdev"
 }
