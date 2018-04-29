@@ -1,5 +1,3 @@
-variable "ssh_id_rsa_pub" {}
-
 variable "location" {
 	 default = "eastus"
 }
@@ -22,4 +20,8 @@ variable "subnet_address_prefix" {
 
 variable "domain_name_label" {
 	 default = "tradebotdev"
+}
+
+variable "vault_secret_path" {
+	 default = "secret/tradebot/dev"
 }
