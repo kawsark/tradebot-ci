@@ -10,7 +10,7 @@
 
 # Emacs, ansible and others
 *~
-**key_vars.yml
+**key_vars*
 **retry
 **id_rsa*
 **azure-ansible-hosts
