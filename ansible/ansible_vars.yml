@@ -1,5 +1,5 @@
 ---
-TRADEBOT_SQS_QUEUE_NAME: tradebot-in-queue-YP0MHaB
+TRADEBOT_SQS_QUEUE_NAME: tradebot-in-prod-queue-YP0MHaB
 TRADEBOT_SERVER_REGION: us-east-1
 artifact_url: https://s3.amazonaws.com/tradebot-artifacts
 artifact_name: tradebot-webui-0.0.1-SNAPSHOT.jar
