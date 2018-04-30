@@ -1,11 +1,9 @@
-variable "ssh_id_rsa_pub" {}
-
 variable "location" {
 	 default = "eastus"
 }
 
 variable "environment" {
-	 default = "Staging"
+	 default = "Stage"
 }
 
 variable "application" {
@@ -22,4 +20,8 @@ variable "subnet_address_prefix" {
 
 variable "domain_name_label" {
 	 default = "tradebotstage"
+}
+
+variable "vault_secret_path" {
+	 default = "secret/tradebot/stage"
 }

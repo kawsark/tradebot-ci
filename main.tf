@@ -1,4 +1,10 @@
-# provider "azurerm" is in account variables
+provider "vault" {
+  # Vault provider configured via environment variables
+}
+
+provider "azurerm" {
+  # Azurerm provider configured via environment variables
+}
 
 # Create the resource group
 resource "azurerm_resource_group" "tradebotresourcegroup" {
@@ -193,6 +199,9 @@ resource "azurerm_lb_probe" "lb_probe" {
 }
 
 
+data "vault_generic_secret" "tradebot_secret" {
+  path = "${var.vault_secret_path}"
+}
 
 
 #Create the Virtual Machine
@@ -229,7 +238,7 @@ resource "azurerm_virtual_machine" "tradebotwebuivm" {
 
     ssh_keys {
       path     = "/home/azureuser/.ssh/authorized_keys"
-      key_data = "${var.ssh_id_rsa_pub}"
+       key_data = "${data.vault_generic_secret.tradebot_secret.data["id_rsa_pub"]}"
     }
   }
 
