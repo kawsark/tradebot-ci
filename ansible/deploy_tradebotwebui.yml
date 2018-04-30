@@ -7,7 +7,7 @@
   connection: ssh
 
   vars_files:
-    - key_vars.yml
+    - key_vars_default.yml
     - ansible_vars.yml
 
   tasks:
