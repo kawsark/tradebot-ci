@@ -1,3 +1,11 @@
+variable "azure_vm_sku" {
+	 default = "Standard_DS1_v2"
+}
+
+variable "azure_vm_qty" {
+	 default = 2
+}
+
 variable "location" {
 	 default = "eastus"
 }
