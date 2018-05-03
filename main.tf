@@ -1,3 +1,4 @@
+#Define providers
 provider "vault" {
   # Vault provider configured via environment variables
 }
@@ -38,21 +39,6 @@ resource "azurerm_subnet" "tradebotsubnet1" {
   address_prefix       = "${var.subnet_address_prefix}"
 }
 
-# Create a public IP address
-resource "azurerm_public_ip" "tradebotpublicip" {
-  name                         = "tradebotpublicip${count.index}"
-  location                     = "${var.location}"
-  resource_group_name          = "${azurerm_resource_group.tradebotresourcegroup.name}"
-  public_ip_address_allocation = "dynamic"
-  count                        = 2
-
-  tags {
-    environment = "${var.environment}"
-    application = "${var.application}"
-    description = "IP address for tradebot Web UI server"
-  }
-}
-
 #Create a network security group
 resource "azurerm_network_security_group" "tradebotpublicipnsg" {
   name                = "tradebotpublicipnsg"
@@ -90,27 +76,6 @@ resource "azurerm_network_security_group" "tradebotpublicipnsg" {
   }
 }
 
-#Create a vNIC x2
-resource "azurerm_network_interface" "tradebotwebuivnic" {
-  name                = "tradebotwebuivnic${count.index}"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
-  count               = 2
-
-  ip_configuration {
-    name                          = "myNicConfiguration${count.index}"
-    subnet_id                     = "${azurerm_subnet.tradebotsubnet1.id}"
-    private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${element(azurerm_public_ip.tradebotpublicip.*.id, count.index)}"
-    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.backend_pool.id}"]
-  }
-
-  tags {
-    environment = "${var.environment}"
-    application = "${var.application}"
-  }
-}
-
 #Create some random text
 resource "random_id" "randomId" {
   keepers = {
@@ -135,17 +100,6 @@ resource "azurerm_storage_account" "tradebotstorageaccount" {
   }
 }
 
-
-#Definitions for HA configuration
-#Create an availability set
-resource "azurerm_availability_set" "avset" {
-  name                         = "tradebotwebuiavset"
-  location                     = "${var.location}"
-  resource_group_name          = "${azurerm_resource_group.tradebotresourcegroup.name}"
-  platform_fault_domain_count  = 2
-  platform_update_domain_count = 2
-  managed                      = true
-}
 
 resource "azurerm_public_ip" "tradebotlbip" {
   name                         = "tradebotlbip"
@@ -204,33 +158,44 @@ data "vault_generic_secret" "tradebot_secret" {
 }
 
 
-#Create the Virtual Machine
-resource "azurerm_virtual_machine" "tradebotwebuivm" {
-  name                  = "tradebotwebuivm${count.index}"
-  location              = "${var.location}"
-  resource_group_name   = "${azurerm_resource_group.tradebotresourcegroup.name}"
-  availability_set_id   = "${azurerm_availability_set.avset.id}"
-  network_interface_ids = ["${element(azurerm_network_interface.tradebotwebuivnic.*.id, count.index)}"]
-  vm_size               = "Standard_DS1_v2"
-  count                 = 2
+#Create Virtual Machine Scale Sets
+resource "azurerm_virtual_machine_scale_set" "tradebotwebuivmss" {
+  name                = "tradebotwebuivmss"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
+  upgrade_policy_mode = "Manual"
 
-  storage_os_disk {
-    name              = "myOsDisk${count.index}"
+  sku {
+    name     = "${var.azure_vm_sku}"
+    tier     = "Standard"
+    capacity = "${var.azure_vm_qty}"
+  }
+
+  storage_profile_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+
+  storage_profile_os_disk {
+    name              = ""
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
   }
 
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
-    version   = "latest"
+  storage_profile_data_disk {
+    lun            = 0
+    caching        = "ReadWrite"
+    create_option  = "Empty"
+    disk_size_gb   = 10
   }
 
   os_profile {
-    computer_name  = "tradebotwebuivm"
-    admin_username = "azureuser"
+    computer_name_prefix = "tradebotwebuivm"
+    admin_username       = "azureuser"
+    admin_password       = "${data.vault_generic_secret.tradebot_secret.data["admin_password"]}"
   }
 
   os_profile_linux_config {
@@ -242,6 +207,27 @@ resource "azurerm_virtual_machine" "tradebotwebuivm" {
     }
   }
 
+  network_profile {
+    name    = "terraformnetworkprofile"
+    primary = true
+
+  ip_configuration {
+    name                          = "tradebotipconfiguration"
+    subnet_id                     = "${azurerm_subnet.tradebotsubnet1.id}"
+    load_balancer_backend_address_pool_ids = ["${azurerm_lb_backend_address_pool.backend_pool.id}"]
+    #load_balancer_inbound_nat_rules_ids    = ["${element(azurerm_lb_nat_pool.lbnatpool.*.id, count.index)}"]
+    
+  public_ip_address_configuration {
+    name                          = "publicipconfiguration"
+    idle_timeout		  = 4
+    domain_name_label		  = "${format("tradebotwebuivm%d", count.index)}"
+  }
+
+
+  }
+
+  }
+
   boot_diagnostics {
     enabled     = "true"
     storage_uri = "${azurerm_storage_account.tradebotstorageaccount.primary_blob_endpoint}"
@@ -251,5 +237,4 @@ resource "azurerm_virtual_machine" "tradebotwebuivm" {
     environment = "${var.environment}"
     application = "${var.application}"
   }
-
 }
