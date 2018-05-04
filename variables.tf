@@ -1,9 +1,17 @@
+variable "cloudflare_domain" {
+	 default = "therealk.com"
+}
+
+variable "subdomain" {
+	 default = "tradebot"
+}
+
 variable "azure_vm_sku" {
 	 default = "Standard_DS1_v2"
 }
 
 variable "azure_vm_qty" {
-	 default = 2
+	 default = 5
 }
 
 variable "location" {
@@ -32,4 +40,8 @@ variable "domain_name_label" {
 
 variable "vault_secret_path" {
 	 default = "secret/tradebot/prod"
+}
+
+variable "vault_common_secret_path" {
+	 default = "secret/tradebot/common"
 }
