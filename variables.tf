@@ -31,7 +31,15 @@ variable "subnet_address_prefix" {
 }
 
 variable "domain_name_label" {
-	 default = "tradebotdev"
+	 default = "tradebotuidev"
+}
+
+variable "domain_name_label_server" {
+	 default = "tradebot"
+}
+
+variable "domain_name_value_server" {
+	 default = "d1qx4ml8m41w1g.cloudfront.net"
 }
 
 variable "vault_secret_path" {
