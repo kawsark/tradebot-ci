@@ -7,6 +7,13 @@ provider "azurerm" {
   # Azurerm provider configured via environment variables
 }
 
+
+# Configure the Cloudflare provider
+provider "cloudflare" {
+  email = "${data.vault_generic_secret.tradebot_common_secret.data["cloudflare_email"]}"
+  token = "${data.vault_generic_secret.tradebot_common_secret.data["cloudflare_api_key"]}"
+}
+
 # Create the resource group
 resource "azurerm_resource_group" "tradebotresourcegroup" {
   name     = "tradebotresourcegroup"
@@ -157,6 +164,10 @@ data "vault_generic_secret" "tradebot_secret" {
   path = "${var.vault_secret_path}"
 }
 
+data "vault_generic_secret" "tradebot_common_secret" {
+  path = "${var.vault_common_secret_path}"
+}
+
 
 #Create Virtual Machine Scale Sets
 resource "azurerm_virtual_machine_scale_set" "tradebotwebuivmss" {
@@ -238,3 +249,26 @@ resource "azurerm_virtual_machine_scale_set" "tradebotwebuivmss" {
     application = "${var.application}"
   }
 }
+
+# Add a record to the domain
+resource "cloudflare_record" "tradebotdns" {
+  domain = "${var.cloudflare_domain}"
+  name   = "${var.domain_name_label}"
+  value  = "${azurerm_public_ip.tradebotlbip.fqdn}"
+  type   = "CNAME"
+  ttl    = 1
+}
+
+# Add a page rule to the domain
+resource "cloudflare_page_rule" "tradebotpagerule" {
+  zone = "${var.cloudflare_domain}"
+  target = "${format("%s.%s",var.subdomain,var.cloudflare_domain)}"
+  priority = 1
+
+  actions = {
+      ssl = "flexible",
+  }
+}
+	    
+
+
