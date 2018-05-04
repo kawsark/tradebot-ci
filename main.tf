@@ -262,7 +262,7 @@ resource "cloudflare_record" "tradebotdns" {
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "tradebotpagerule" {
   zone = "${var.cloudflare_domain}"
-  target = "${format("%s.%s",var.subdomain,var.cloudflare_domain)}"
+  target = "${format("%s.%s",var.domain_name_label,var.cloudflare_domain)}"
   priority = 1
 
   actions = {
