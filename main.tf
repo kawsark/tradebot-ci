@@ -108,6 +108,11 @@ resource "azurerm_storage_account" "tradebotstorageaccount" {
 }
 
 
+data "azurerm_public_ip" "tradebotlbip" {
+  name = "${azurerm_public_ip.tradebotlbip.name}"
+  resource_group_name = "${azurerm_resource_group.tradebotresourcegroup.name}"
+}
+
 resource "azurerm_public_ip" "tradebotlbip" {
   name                         = "tradebotlbip"
   location                     = "${var.location}"
@@ -250,25 +255,22 @@ resource "azurerm_virtual_machine_scale_set" "tradebotwebuivmss" {
   }
 }
 
-# Add a record to the domain
+# Add the UI record to domain
 resource "cloudflare_record" "tradebotdns" {
   domain = "${var.cloudflare_domain}"
   name   = "${var.domain_name_label}"
-  value  = "${azurerm_public_ip.tradebotlbip.fqdn}"
+  value  = "${data.azurerm_public_ip.tradebotlbip.fqdn}"
+  type   = "CNAME"
+  ttl    = 1 
+  depends_on = ["azurerm_lb.tradebotlb","azurerm_virtual_machine_scale_set.tradebotwebuivmss"]
+}
+
+# Add the server record to domain
+resource "cloudflare_record" "tradebotdns_server" {
+  domain = "${var.cloudflare_domain}"
+  name   = "${var.domain_name_label_server}"
+  value  = "${var.domain_name_value_server}"
   type   = "CNAME"
   ttl    = 1
 }
-
-# Add a page rule to the domain
-resource "cloudflare_page_rule" "tradebotpagerule" {
-  zone = "${var.cloudflare_domain}"
-  target = "${format("%s.%s",var.domain_name_label,var.cloudflare_domain)}"
-  priority = 1
-
-  actions = {
-      ssl = "flexible",
-  }
-}
-	    
-
 
