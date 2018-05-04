@@ -7,7 +7,7 @@ variable "azure_vm_sku" {
 }
 
 variable "azure_vm_qty" {
-	 default = 3
+	 default = 2
 }
 
 variable "location" {
@@ -31,7 +31,15 @@ variable "subnet_address_prefix" {
 }
 
 variable "domain_name_label" {
+	 default = "tradebotui"
+}
+
+variable "domain_name_label_server" {
 	 default = "tradebot"
+}
+
+variable "domain_name_value_server" {
+	 default = "d1qx4ml8m41w1g.cloudfront.net"
 }
 
 variable "vault_secret_path" {
