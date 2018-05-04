@@ -2,16 +2,12 @@ variable "cloudflare_domain" {
 	 default = "therealk.com"
 }
 
-variable "subdomain" {
-	 default = "tradebot"
-}
-
 variable "azure_vm_sku" {
 	 default = "Standard_DS1_v2"
 }
 
 variable "azure_vm_qty" {
-	 default = 5
+	 default = 3
 }
 
 variable "location" {

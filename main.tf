@@ -253,7 +253,7 @@ resource "azurerm_virtual_machine_scale_set" "tradebotwebuivmss" {
 # Add a record to the domain
 resource "cloudflare_record" "tradebotdns" {
   domain = "${var.cloudflare_domain}"
-  name   = "${var.subdomain}"
+  name   = "${var.domain_name_label}"
   value  = "${azurerm_public_ip.tradebotlbip.fqdn}"
   type   = "CNAME"
   ttl    = 1
@@ -262,7 +262,7 @@ resource "cloudflare_record" "tradebotdns" {
 # Add a page rule to the domain
 resource "cloudflare_page_rule" "tradebotpagerule" {
   zone = "${var.cloudflare_domain}"
-  target = "${format("%s.%s",var.subdomain,var.cloudflare_domain)}"
+  target = "${format("%s.%s",var.domain_name_label,var.cloudflare_domain)}"
   priority = 1
 
   actions = {
