@@ -2,7 +2,10 @@
 module "tradebot" {
   source = "github.com/kawsark/tradebot-terraform-module"
 
-  #Setting Production specific variables
+  #Set the region (optional - module defaults to us-east-1)
+  aws_region = "us-east-1"
+
+  #Setting Production specific variables (optional - module defaults to production)
   environment = "production"
   subnet_address_prefix = "10.0.2.0/24"
   domain_name_label = "tradebotui"
@@ -13,11 +16,11 @@ module "tradebot" {
   private_subnet_1_block = "192.168.16.0/21"
   private_subnet_2_block = "192.168.24.0/21"
 
-  #Capacity related variables
+  #Capacity related variables (optional)
   azure_vm_qty = 2
   azure_vm_sku = "Standard_DS1_v2"
   instance_size = "t2.micro"
   asg_size_map = { min = 1, desired = 2, max = 2 }
-
+  
 }
   
