@@ -2,7 +2,10 @@
 #Use this script to trigger ansible deployment of tradebot webui application
 #Assumes azure cli is installed and authenticated
 export ansible_hosts_file=azure-ansible-hosts
-az vmss list-instance-public-ips -g tradebotresourcegroup -n tradebotwebuivmss | grep \"ipAddress\"\: > azure_ip_addr.txt
+export tradebot_resource_group=tradebotRG-stage
+export tradebot_vmss=tradebotwebuivmss-stage
+
+az vmss list-instance-public-ips -g $tradebot_resource_group -n $tradebot_vmss | grep \"ipAddress\"\: > azure_ip_addr.txt
 #az vm list-ip-addresses -g tradebotresourcegroup | grep \"ipAddress\"\: > azure_ip_addr.txt
 echo Deploying application to servers: $(cat azure_ip_addr.txt)
 cat > $ansible_hosts_file <<EOL
