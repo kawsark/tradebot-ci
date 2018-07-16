@@ -1,13 +1,20 @@
 # tradebot-ci
-### Provisions the tradebot application. There are 3 key environments being provisioned: Server infrastructure in AWS, Web Interface in Azure and DNS records in CloudFlare.
+### Provisions the tradebot application.
+There are 3 key environments being provisioned: Server infrastructure in AWS, Web Interface in Azure and DNS records in CloudFlare.
 
 #### Instructions for use:
 Please setup the dependencies below and run: `terraform get`, `terraform plan` and `terraform apply`. To remove the environment, use: `terraform destroy`.
-- ** Dependencies: ** There is a dependency on Vault to obtain secrets. AWS and Azure credentials are assumed to be available via Environment variables, and / or `az`, `aws` CLI configuration.
-- ** Module: ** Provisioning code, outputs and default variables are stored in the tradebot-terraform-module Git repo.
-- ** Outputs: ** To view outputs, please run the `terraform output -module=tradebot`
+- ** Dependencies: ** There is a dependency on Vault to obtain secrets. Please see more information in [tradebot-terraform-module](https://github.com/kawsark/tradebot-terraform-module) Git repo.
+- ** Module: ** Provisioning code, outputs and default variables are stored in the [tradebot-terraform-module](https://github.com/kawsark/tradebot-terraform-module) Git repo.
+- ** Outputs: ** To view outputs, please run the `terraform output -module=tradebotui` or `terraform output -module=tradebotserver`
 - ** Variables: ** All variables are optional, recommended variables are set in the main.tf file for each branch
-- ** Remote state: ** An S3 backend is configured in the `backend.tf` file, please adjust bucket details appropriately. Alternatively this file can be removed if local state is ok.
+- ** Remote state: ** An S3 backend is configured in the `backend.tf` file, please adjust bucket details appropriately.
+ - Alternatively this file can be removed if local state is ok.
+ - If AWS credentials are loaded into Vault, the following commands can be used to load environment variables:
+```
+export AWS_SECRET_ACCESS_KEY=$(vault read -field=aws_secret_key secret/tradebot/common)
+export AWS_ACCESS_KEY_ID=$(vault read -field=aws_access_key secret/tradebot/common)
+```
 
 #### Instructions for use:
 **CloudFlare DNS**:
