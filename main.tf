@@ -1,8 +1,8 @@
 #Provision the Tradebot UI and DNS infrastructure in Azure
 module "tradebotui" {
-  source = "github.com/kawsark/tradebot-terraform-module//tradebot-ui-azure"
+  source = "github.com/kawsark/tradebot-terraform-module//tradebot-ui-azure?ref=dev"
 
-  #Setting Production specific variables (optional - module defaults to production)
+  #Setting Dev specific variables (module defaults to production)
   environment = "dev"
   location    = "eastus"
   vault_secret_path = "secret/tradebot/dev"
@@ -16,7 +16,7 @@ module "tradebotui" {
 
 #Provision the Tradebot server infrastructure in AWS
 module "tradebotserver" {
-  source = "github.com/kawsark/tradebot-terraform-module//tradebot-server-aws"
+  source = "github.com/kawsark/tradebot-terraform-module//tradebot-server-aws?ref=dev"
 
   #Setting Production specific variables (optional - module defaults to production)
   environment            = "dev"
